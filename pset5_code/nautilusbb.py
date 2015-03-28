@@ -3,7 +3,7 @@
 import sys
 
 from gsp import GSP
-from util import argmax_index
+from util import argmax_index     Casi
 
 class Nautilusbb:
     """Balanced bidding agent"""
@@ -83,7 +83,20 @@ class Nautilusbb:
 
         # TODO: Fill this in.
         bid = 0  # change this
-        
+        info = self.target_slot(t,history,reserve)
+
+        min_bid = info[1]
+        k = info[0]
+        p = .75 * min_bid
+
+        # written for clarity
+        if p >= self.value:
+            bid = self.value
+        elif k > 0:
+            bid = self.value - .75 * (self.value - p)
+        else:
+            bid = self.value
+
         return bid
 
     def __repr__(self):
