@@ -3,7 +3,7 @@
 import sys
 
 from gsp import GSP
-from util import argmax_index     Casi
+from util import argmax_index
 
 class Nautilusbb:
     """Balanced bidding agent"""
@@ -50,13 +50,13 @@ class Nautilusbb:
         returns a list of tuples (slot_id, utility) per slot.
         """
         # info contains (slot_id, min_bid, max_bid) so if we bid min_bid <= b <= max_bid we win slot_id
-        info = self.slot_info(t-1,history, reserve)
+        info = self.slot_info(t,history, reserve)
 
         # calculates utility per slot assuming agent has won with bid
         utility_per_slot = lambda  bid: (self.value - 0.75 * bid)
         
         # expected utility
-        utilities = [(slot_id, utility_per_slot(min_bid)) for (slot_id, min_bid, _) in click_info]
+        utilities = [(slot_id, utility_per_slot(min_bid)) for (slot_id, min_bid, _) in info]
 
         return utilities
 
