@@ -44,15 +44,24 @@ class VCG:
         
         (allocation, just_bids) = zip(*allocated_bids)
 
-        # TODO: You just have to implement this function
         def total_payment(k):
             """
             Total payment for a bidder in slot k.
             """
+            # TODO: need to multiply by q_k
             c = slot_clicks
             n = len(allocation)
 
-            # TODO: Compute the payment and return it.
+            # non-allocated bidder pays 0. Index 0 -> n -1 for allocated bidders
+            if k == n - 1:
+                # num_slots > #valid bidders, bNext <= reserve. 
+                if len(valid_bids) == len(just_bids):
+                    return c[k]*reserve
+
+                # valid_bids is a tuple
+                return c[k]*valid_bids[k+1][1]
+
+            return (c[k] - c[k+1])* valid_bids[k+1][1] + total_payment(k+1)
 
         def norm(totals):
             """Normalize total payments by the clicks in each slot"""
