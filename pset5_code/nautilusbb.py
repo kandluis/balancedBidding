@@ -47,12 +47,12 @@ class Nautilusbb:
         slot, assuming that everyone else keeps their bids constant from
         the previous round.
 
-        returns a list of utilities per slot.
+        returns a list of tuples (slot_id, utility) per slot.
         """
         # TODO: Fill this in
-        utilities = []   # Change this
+        info = self.slot_info(t,history, reserve)
+        utilities = [(slot_id, self.value - min_bid) for (slot_id, min_bid, max_bid) in info]   # Change this
 
-        
         return utilities
 
     def target_slot(self, t, history, reserve):
