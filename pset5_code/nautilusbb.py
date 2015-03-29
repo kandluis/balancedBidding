@@ -88,19 +88,19 @@ class Nautilusbb:
         prev_round = history.round(t-1)
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
 
-        # TODO: Fill this in.
         bid = 0  # change this
         info = self.target_slot(t,history,reserve)
 
         min_bid = info[1]
+        clicks = [float(x) for x in prev_round.clicks]
         k = info[0]
-        p = .75 * min_bid
+        p = min_bid
 
         # written for clarity
         if p >= self.value:
             bid = self.value
         elif k > 0:
-            bid = self.value - .75 * (self.value - p)
+            bid = self.value - (clicks[k]/clicks[k-1]) * (self.value - p)
         else:
             bid = self.value
 
