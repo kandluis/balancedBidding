@@ -48,20 +48,20 @@ class VCG:
             """
             Total payment for a bidder in slot k.
             """
-            # TODO: need to multiply by q_k
             c = slot_clicks
             n = len(allocation)
-
-            # non-allocated bidder pays 0. Index 0 -> n -1 for allocated bidders
+            next_bid = lambda k: valid_bids[k+1][1]
+            
+            # last allocated bidder might pay reserve. Index 0 -> n -1 for allocated bidders
             if k == n - 1:
-                # num_slots > #valid bidders, bNext <= reserve. 
+                # num_slots > #valid bidders, next_bid <= reserve. 
                 if len(valid_bids) == len(just_bids):
                     return c[k]*reserve
 
-                # valid_bids is a tuple
-                return c[k]*valid_bids[k+1][1]
+                # otherwise pays next_bid > reserve
+                return c[k]*next_bid(k)
 
-            return (c[k] - c[k+1])* valid_bids[k+1][1] + total_payment(k+1)
+            return (c[k] - c[k+1]) * next_bid(k) + total_payment(k+1)
 
         def norm(totals):
             """Normalize total payments by the clicks in each slot"""
