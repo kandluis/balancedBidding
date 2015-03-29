@@ -1,0 +1,67 @@
+\documentclass[11pt]{article}
+\usepackage{hyperref}
+\usepackage{enumitem,fullpage,amsmath,amsthm,multirow,array,graphicx}
+\usepackage{amsfonts}
+\usepackage{comment}
+\usepackage[procnames]{listings}
+\usepackage{color} % used for including code
+\definecolor{keywords}{RGB}{255,0,90}
+\definecolor{comments}{RGB}{0,0,113}
+\definecolor{red}{RGB}{160,0,0}
+\definecolor{green}{RGB}{0,150,0}
+ 
+\lstset{language=Python, 
+        basicstyle=\ttfamily\small, 
+        keywordstyle=\color{keywords},
+        commentstyle=\color{comments},
+        stringstyle=\color{red},
+        showstringspaces=false,
+        identifierstyle=\color{green},
+        procnamekeys={def,class}}
+
+\newcommand{\points}[1]{\textbf{[#1 Points]}}
+\newcommand{\extracredit}{\mbox{\textbf{[Extra Credit]}}}
+
+\newcommand{\Pm}[1]{\mathbb{P}\left[#1 \right]}
+\title{CS186 Balanced Bidding}
+\author{Luis Perez \& Tiffany Wu}
+\date{\today}
+
+\begin{document}
+\maketitle
+
+\section*{Balanced Bidding Agent}
+\begin{enumerate}
+\item We use the truthful bidding agent as an example. The  implementation of the expected utility function is below:
+
+  % expected utility code depends on pset5_code/nautilusbb.py
+  \lstinputlisting[language=Python, firstline=44, lastline=44]{pset5_code/nautilusbb.py}
+  \lstinputlisting[language=Python, firstline=52, lastline=64]{pset5_code/nautilusbb.py}
+
+  followed by the implementation of the bid function:
+
+  % bid code depends on pset5_code/nautilusbb.py
+  \lstinputlisting[language=Python, firstline=78, lastline=78]{pset5_code/nautilusbb.py}
+  \lstinputlisting[language=Python, firstline=89, lastline=108]{pset5_code/nautilusbb.py}
+\item 
+  \begin{enumerate}
+  \item 
+  \end{enumerate}
+\end{enumerate}
+
+\section*{Experiments with Revenue: GSP vs VCG Auctions}
+\begin{enumerate}[resume]
+\item 
+  \begin{enumerate}
+  \item 
+  \end{enumerate}
+\end{enumerate}
+
+\section*{The Competition}
+\begin{enumerate}[resume]
+\item
+  \begin{enumerate}
+  \item 
+  \end{enumerate}
+\end{enumerate}
+\end{document}

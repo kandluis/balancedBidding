@@ -49,16 +49,17 @@ class Nautilusbb:
 
         returns a list of tuples (slot_id, utility) per slot.
         """
-        # info contains (slot_id, min_bid, max_bid) so if we bid min_bid <= b <= max_bid we win slot_id
+        # info contains (slot_id, min_bid, max_bid) so if we bid 
+        # min_bid <= b <= max_bid we win slot_id
         info = self.slot_info(t,history, reserve)
         clicks = history.round(t-1).clicks
 
         # calculates utility per slot assuming agent has won with bid
         # uses clicks and info[i][2] = min_bid for round i
-        utility_per_slot = lambda slot: clicks[slot]*(self.value - info[slot][1])
+        utility = lambda s: clicks[s]*(self.value - info[s][1])
         
         # expected utility
-        utilities = [utility_per_slot(slot_id) for (slot_id, _, _) in info]
+        utilities = [utility(slot_id) for (slot_id, _, _) in info]
 
         return utilities
 
@@ -92,7 +93,7 @@ class Nautilusbb:
         info = self.target_slot(t,history,reserve)
 
         min_bid = info[1]
-        clicks = [float(x) for x in prev_round.clicks]
+        c = [float(x) for x in prev_round.clicks]
         k = info[0]
         p = min_bid
 
@@ -100,7 +101,7 @@ class Nautilusbb:
         if p >= self.value:
             bid = self.value
         elif k > 0:
-            bid = self.value - (clicks[k]/clicks[k-1]) * (self.value - p)
+            bid = self.value - (c[k]/c[k-1]) * (self.value - p)
         else:
             bid = self.value
 

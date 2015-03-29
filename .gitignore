@@ -55,3 +55,8 @@ target/
 
 # ignore PDF files
 *.pdf
+
+# ignore latex intermidiate files
+*.aux
+*.synctex.gz
+*.out
