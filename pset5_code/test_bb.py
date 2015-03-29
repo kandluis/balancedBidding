@@ -5,7 +5,7 @@
 # called test_blah and runs them)
 
 from auction import History
-from bbagent import BBAgent
+from nautilusbb import Nautilusbb as BBAgent 
 
 
 def dual_assert(x,y):

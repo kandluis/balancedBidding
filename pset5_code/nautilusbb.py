@@ -51,12 +51,14 @@ class Nautilusbb:
         """
         # info contains (slot_id, min_bid, max_bid) so if we bid min_bid <= b <= max_bid we win slot_id
         info = self.slot_info(t,history, reserve)
+        clicks = history.round(t-1).clicks
 
         # calculates utility per slot assuming agent has won with bid
-        utility_per_slot = lambda  bid: (self.value - 0.75 * bid)
+        # uses clicks and info[i][2] = min_bid for round i
+        utility_per_slot = lambda slot: clicks[slot]*(self.value - info[slot][1])
         
         # expected utility
-        utilities = [(slot_id, utility_per_slot(min_bid)) for (slot_id, min_bid, _) in info]
+        utilities = [utility_per_slot(slot_id) for (slot_id, _, _) in info]
 
         return utilities
 
