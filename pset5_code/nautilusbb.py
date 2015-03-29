@@ -101,6 +101,7 @@ class Nautilusbb:
         if p >= self.value:
             bid = self.value
         elif k > 0:
+            # use click ratio as a measure of quality ratio
             bid = self.value - (c[k]/c[k-1]) * (self.value - p)
         else:
             bid = self.value

@@ -19,6 +19,9 @@
         identifierstyle=\color{green},
         procnamekeys={def,class}}
 
+% Used for table
+\usepackage{booktabs}
+
 \newcommand{\points}[1]{\textbf{[#1 Points]}}
 \newcommand{\extracredit}{\mbox{\textbf{[Extra Credit]}}}
 
@@ -42,7 +45,7 @@
 
   % bid code depends on pset5_code/nautilusbb.py
   \lstinputlisting[language=Python, firstline=78, lastline=78]{pset5_code/nautilusbb.py}
-  \lstinputlisting[language=Python, firstline=89, lastline=108]{pset5_code/nautilusbb.py}
+  \lstinputlisting[language=Python, firstline=89, lastline=109]{pset5_code/nautilusbb.py}
 \item 
   \begin{enumerate}
   \item 
@@ -53,7 +56,21 @@
 \begin{enumerate}[resume]
 \item 
   \begin{enumerate}
-  \item 
+  \item We make use if the commands:
+  \begin{lstlisting}
+  ./auction --perms 5 --iters 200 --seed 39 Truthful,5
+  ./auction --perms 5 --iters 200 --seed 39 Nautilusbb,5
+  \end{lstlisting}
+  The below table summarizes our results
+  
+    \begin{table}[h]
+\begin{tabular}{clllllll}
+\hline
+(Truthful, Balanced Bidding) & Agent 0                     & Agent 1                     & Agent 2                     & Agent 3                     & Agent 4                     & Average                     & Std. Dev                 \\ \hline
+\multicolumn{1}{|c|}{(5,0)}  & \multicolumn{1}{l|}{323.83} & \multicolumn{1}{l|}{325.21} & \multicolumn{1}{l|}{306.81} & \multicolumn{1}{l|}{332.79} & \multicolumn{1}{l|}{322.29} & \multicolumn{1}{l|}{322.19} & \multicolumn{1}{l|}{8.5} \\ \hline
+(0,5)                        &                             &                             &                             &                             &                             &                             &                          \\ \hline
+\end{tabular}
+\end{table}
   \end{enumerate}
 \end{enumerate}
 
