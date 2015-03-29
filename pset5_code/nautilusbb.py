@@ -5,7 +5,7 @@ import sys
 from gsp import GSP
 from util import argmax_index
 
-class Nautilusbb:
+class Nautilusbb(object):
     """Balanced bidding agent"""
     def __init__(self, id, value, budget):
         self.id = id
@@ -75,6 +75,7 @@ class Nautilusbb:
         info = self.slot_info(t, history, reserve)
         return info[i]
 
+
     def bid(self, t, history, reserve):
         # The Balanced bidding strategy (BB) is the strategy for a player j that, given
         # bids b_{-j},
@@ -85,7 +86,6 @@ class Nautilusbb:
         # clicks_{s*_j} (v_j - p_{s*_j}(j)) = clicks_{s*_j-1}(v_j - b')
         # (p_x is the price/click in slot x)
         # If s*_j is the top slot, bid the value v_j
-
         prev_round = history.round(t-1)
         (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
 
