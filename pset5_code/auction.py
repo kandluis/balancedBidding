@@ -240,59 +240,14 @@ def parse_agents(args):
             raise ValueError("Bad argument: %s\n" % c)
     return ans
 
-def main(args):
+def run_sim(options, args):
+    """
+    Runs the auction simulation given a parsed set of options and its leftover
+    elements. 
 
-    usage_msg = "Usage:  %prog [options] PeerClass1[,cnt] PeerClass2[,cnt2] ..."
-    parser = OptionParser(usage=usage_msg)
-
-    def usage(msg):
-        print "Error: %s\n" % msg
-        parser.print_help()
-        sys.exit()
-    
-    parser.add_option("--loglevel",
-                      dest="loglevel", default="info",
-                      help="Set the logging level: 'debug' or 'info'")
-
-    parser.add_option("--mech",
-                      dest="mechanism", default="gsp",
-                      help="Set the mechanim: 'gsp' or 'vcg' or 'switch'")
-
-    parser.add_option("--num-rounds",
-                      dest="num_rounds", default=48, type="int",
-                      help="Set number of rounds")
-
-    parser.add_option("--min-val",
-                      dest="min_val", default=25, type="int",
-                      help="Min per-click value, in cents")
-
-    parser.add_option("--max-val",
-                      dest="max_val", default=175, type="int",
-                      help="Max per-click value, in cents")
-
-    parser.add_option("--budget",
-                      dest="budget", default=500000, type="int",
-                      help="Total budget, in cents")
-    
-    parser.add_option("--reserve",
-                      dest="reserve", default=0, type="int",
-                      help="Reserve price, in cents")
-
-    parser.add_option("--perms",
-                      dest="max_perms", default=120, type="int",
-                      help="Max number of value permutations to run.  Set to 1 for debugging.")
-
-    parser.add_option("--iters",
-                      dest="iters", default=1, type="int",
-                      help="Number of different value draws to sample. Set to 1 for debugging.")
-
-    parser.add_option("--seed",
-                      dest="seed", default=None, type="int",
-                      help="seed for random numbers")
-
-
-    (options, args) = parser.parse_args()
-
+    Returns a dictionary of {key: value} pairings with information on the results
+    of the simulation. 
+    """
     # leftover args are class names:
     # e.g. "Truthful BBAgent CleverBidder Fred"
 
@@ -381,6 +336,72 @@ def main(args):
     #for t in range(47, 48):
     #for a in agents:
         #print a,"'s added values is", av_value[a.id]
+
+    # we return mean revenue for these iterations
+    return {'revenue' : m,
+            'revenues' : total_revenues}
+
+def parse_inputs(args):
+    usage_msg = "Usage:  %prog [options] PeerClass1[,cnt] PeerClass2[,cnt2] ..."
+    parser = OptionParser(usage=usage_msg)
+
+    def usage(msg):
+        print "Error: %s\n" % msg
+        parser.print_help()
+        sys.exit()
+    
+    parser.add_option("--loglevel",
+                      dest="loglevel", default="info",
+                      help="Set the logging level: 'debug' or 'info'")
+
+    parser.add_option("--mech",
+                      dest="mechanism", default="gsp",
+                      help="Set the mechanim: 'gsp' or 'vcg' or 'switch'")
+
+    parser.add_option("--num-rounds",
+                      dest="num_rounds", default=48, type="int",
+                      help="Set number of rounds")
+
+    parser.add_option("--min-val",
+                      dest="min_val", default=25, type="int",
+                      help="Min per-click value, in cents")
+
+    parser.add_option("--max-val",
+                      dest="max_val", default=175, type="int",
+                      help="Max per-click value, in cents")
+
+    parser.add_option("--budget",
+                      dest="budget", default=500000, type="int",
+                      help="Total budget, in cents")
+    
+    parser.add_option("--reserve",
+                      dest="reserve", default=0, type="int",
+                      help="Reserve price, in cents")
+
+    parser.add_option("--perms",
+                      dest="max_perms", default=120, type="int",
+                      help="Max number of value permutations to run.  Set to 1 for debugging.")
+
+    parser.add_option("--iters",
+                      dest="iters", default=1, type="int",
+                      help="Number of different value draws to sample. Set to 1 for debugging.")
+
+    parser.add_option("--seed",
+                      dest="seed", default=None, type="int",
+                      help="seed for random numbers")
+
+    return parser
+
+def main(args):
+
+    # parse the input arguments into object
+    parser = parse_inputs(args)
+
+    # extract options and arguments from parse object
+    (options, args) = parser.parse_args()
+
+    # we ignore our return values
+    run_sim(options, args)
         
 
 

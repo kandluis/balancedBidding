@@ -52,7 +52,8 @@ class VCG:
             n = len(allocation)
             next_bid = lambda k: valid_bids[k+1][1]
             
-            # last allocated bidder might pay reserve. Index 0 -> n -1 for allocated bidders
+            # last allocated bidder might pay reserve. Index 0 -> n -1 
+            # for allocated bidders
             if k == n - 1:
                 # num_slots > #valid bidders, next_bid <= reserve. 
                 if len(valid_bids) == len(just_bids):
@@ -61,6 +62,7 @@ class VCG:
                 # otherwise pays next_bid > reserve
                 return c[k]*next_bid(k)
 
+            # value depends on your effect plus payment of others
             return (c[k] - c[k+1]) * next_bid(k) + total_payment(k+1)
 
         def norm(totals):
