@@ -164,11 +164,11 @@
   \begin{figure}[h!]
   \centering
     \includegraphics[scale=0.4]{pset5_code/gsp_reserve_plot}
-    \caption{Plot of the revenue with change in reserve price for a generalized second prize auction.}
+    \caption{Plot of the revenue with change in reserve price for a generalized second prize auction with agents who use a balanced bidding strategy.}
     \label{fig:gps_plot}
   \end{figure}
 
-  From the text, we know that the revenue-optimal reserve price in a GSP with balanced bidding is given by $\phi^{-1}(0)$ where we define:
+  From the text, we know that the revenue-optimal reserve price in a GSP with balanced bidding is given by $\phi^{-1}(0)$, where we define:
   \begin{align*}
     \phi(w_i) &= w_i - \frac{1-F(w_i)}{f(w_i)}
   \end{align*}
@@ -198,23 +198,43 @@
   \begin{lstlisting}
   ./auction --perms 1 --iters 200 --mech="vcg" --seed 39  Truthful,5
   \end{lstlisting}
-  as is, on average, $\$4333.55$ with a standard deviation of $\$1124.06$ (relatively high...).
+  and is, on average, $\$4333.55$ with a standard deviation of $\$1124.06$ (relatively high...).
 
-  We expect something similar to GSP as the bids increase. For verification, we can see Figure TODO
+  We expect something similar to GSP as the bids increase. For verification, we can see Figure \ref{fig:vcg_reserve}.
 
-  Comparing the two models, we first note that the average daily revenue is about the same. This wouldn't hold, however, if the balanced bidding strategy were used with the VCG mechanism. In that scenario, the revenue would be less than the revenue from the GSP. This intuition is verified in the part below.
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.5]{pset5_code/vcg_reserve_plot}
+    \caption{Plot of VCG Auction revenue with 5 truthful bidders with respect to reserve price.}
+    \label{fig:vcg_reserve}
+  \end{figure}
 
-  However, for the above, it appears that truthful bidding in VCG and balanced bidding in GSP are equally apt at maximizing average daily revenue for the auctioneer. 
+  From the figure, we can tell that a similar revenue-optimizing reserve price is also achievable. It's interesting to note how quickly the revenue drops off if the reserve price surpasses the optimal. This might lead auctioneers to under-estimate the reserve price, in an attempt to prevent steep revenue decreases.
 
-  As to the effects of reserve price, from the two Figures TODO
+  Comparing the two models, we first note that the average daily revenue is about the same, with VCG lower. 
 
-  \item The revenue decreases, as expected. It is now  The balanced bidding strategy is not revenue-optimizing in the VCG mechanism. We can see this more clearly from the Figure TODO, which was generated using the command:
+  However, for the above, it appears that truthful bidding in VCG and balanced bidding in GSP are equally apt at maximizing average daily revenue for the auctioneer, within a few percentage points of each other. Given the variance, not much else can be said.
+
+  As to the effects of reserve price, from both Figure \ref{fig:gps_plot} and \ref{fig:vcg_reserve}, we can tell that the reserve increases revenue slightly as it increases, then rapidly becomes a negative effect. 
+
+  The only qualitative difference between the two figures is the volatility of Figure \ref{fig:gps_plot}. However, this is likely an artifact of the bidding strategy or the seed, rather than the changes in the reserve price or GSP itself.
+
+  \item The revenue decreases, as expected. It is now \$4068.70, which is lower by about $10\%$.  The balanced bidding strategy is not revenue-optimizing in the VCG mechanism. We can see this more clearly from the Figure \ref{fig:switch}, which was generated using the command:
    \begin{lstlisting}
-  ./reserve_graph --perms 1 --iters 200 --seed 39 --mech="vcg" --figure_title "..." --figure_file "..." Nautilusbb,5
+  ./reserve_graph --perms 1 --iters 200 --seed 39 
+  --mech="switch" --figure_title "..." --figure_file "..." 
+  Nautilusbb,5
   \end{lstlisting}
 
-  Note that the switch occurs at time period 24.
+  \begin{figure}[h!]
+    \centering
+    \includegraphics[scale=0.5]{pset5_code/switch_revenue}
+    \caption{Revenue for auctioneering when switching from GSP to VCG at round 24.}
+    \label{fig:switch}
+  \end{figure}
+  Note that the switch occurs at time period 24. Ignoring the effects on the revenue by the creased number of clicks, it's immediately obvious that VCG leads to a decrease in revenue (the graph would be symmetric if this were not the case, given that the budget constraint hasn't come into play). 
   \item TODO 3(e)
+  agents have trade-off, analysis is hard, complicated, not immediately clear which mechanism is best, etc. 
   \end{enumerate}
 \end{enumerate}
 

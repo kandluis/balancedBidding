@@ -8,22 +8,29 @@ class Stats:
         self.history = history
         self.values = values  # dict id->value
 
+    def util_in_round(self,id,t):
+        round = self.history.round(t)
+        if id not in round.occupants:
+            # Didn't get a slot in this round
+            return 0
+        slot = round.occupants.index(id)
+        return round.clicks[slot] * (
+            self.values[id] - round.per_click_payments[slot])
+
     def total_utility(self, id, verbose=False):
-        def util(t):
-            round = self.history.round(t)
-            if id not in round.occupants:
-                # Didn't get a slot in this round
-                return 0
-            slot = round.occupants.index(id)
-            return round.clicks[slot] * (
-                self.values[id] - round.per_click_payments[slot])
+        
 
         rounds = self.history.num_rounds()
         if(verbose):
-            logging.info("%d: utils: %s\n" % (id, str(list(util(t) for t in range(rounds)))))
+            logging.info("%d: utils: %s\n" % (id, str(list(self.util(id,t) for t in range(rounds)))))
             logging.info("%d: value = %s" % (id, self.values[id]))
         
-        return sum(util(t) for t in range(rounds))
+        return sum(self.util_in_round(id,t) for t in range(rounds))
+
+    def revenue_in_round(self, t):
+        r = self.history.round(t)
+        rev = sum(r.slot_payments)
+        return rev
 
     def total_revenue(self):
         rev = 0
@@ -32,8 +39,8 @@ class Stats:
                        zip(slot_clicks, per_click_payments))
 
         for i in range(self.history.num_rounds()):
-            r = self.history.round(i)
-            rev += sum(r.slot_payments)
+            rev += self.revenue_in_round(i)
+
         return rev
 
     def __repr__(self):

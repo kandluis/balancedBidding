@@ -286,6 +286,7 @@ def run_sim(options, args):
     total_spent = [0 for i in range(n)]
 
     ##  iters = no. of samples to take
+    statistics = []
     for i in range(options.iters):
         values = get_utils(n, options)
         logging.info("==== Iteration %d / %d.  Values %s ====" % (i, options.iters, values))
@@ -297,7 +298,7 @@ def run_sim(options, args):
 
         total_rev = 0
         ## Iterate over permutations
-        for vals in perms:
+        for j,vals in enumerate(perms):
             options.agent_values = list(vals)
             values = dict(zip(range(n), list(vals)))
             ##   Runs simulation  ###
@@ -306,6 +307,10 @@ def run_sim(options, args):
             stats = Stats(history, values)
             # Print stats in console?
             # logging.info(stats)
+
+            # save stats
+            statistics.append(stats)
+
             
             for id in range(n):
                 totals[id] += stats.total_utility(id)
@@ -338,8 +343,9 @@ def run_sim(options, args):
         #print a,"'s added values is", av_value[a.id]
 
     # we return mean revenue for these iterations
-    return {'revenue' : m,
-            'revenues' : total_revenues}
+    return {'revenue'   : m,
+            'revenues'  : total_revenues,
+            'stats'     : statistics}
 
 def parse_inputs(args):
     usage_msg = "Usage:  %prog [options] PeerClass1[,cnt] PeerClass2[,cnt2] ..."

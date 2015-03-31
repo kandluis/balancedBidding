@@ -5,12 +5,11 @@ import sys
 def plot_options(x,y, options):
   # plot the figure
   fig = pl.figure()
-  pl.plot(reserves, revenues)
+  pl.plot(x, y)
   pl.xlabel(options.figure_xlabel)
   pl.ylabel(options.figure_ylabel)
   pl.title(options.figure_title)
   fig.savefig(options.figure_file)
-
 
 def plot_revenue_by_reserve(args, options, reserves):
   '''
@@ -27,6 +26,19 @@ def plot_revenue_by_reserve(args, options, reserves):
   plot_options(reserves, revenues, options)
 
 def plot_revenue_by_period(args,options):
+  results = auction.run_sim(options, args)
+  stats = results['stats']
+
+  per_run_revenues = [[stat.revenue_in_round(t) for t in xrange(stat.history.num_rounds())] for stat in stats ]
+
+  per_bid_revenues = [float(sum(revenue)/100) for revenue in zip(*per_run_revenues)]
+
+  t = len(per_bid_revenues)
+  x = range(t)
+
+  plot_options(x,per_bid_revenues,options)
+
+def plot_revenue_by_iteration(args,options):
   '''
   Runs a the auction simulation and plots the revenues for each time period
   '''
@@ -37,7 +49,7 @@ def plot_revenue_by_period(args,options):
   x = range(0,len(revenues))
   y = revenues
 
-  plot_revenue_by_period(x,y, options)
+  plot_options(x,y, options)
 
 def parse_figure_inputs(parser):
 
@@ -54,7 +66,7 @@ def parse_figure_inputs(parser):
                     help="The label for the x-axis.")
   
   parser.add_option("--figure_ylabel",
-                    dest="figure_ylabel", default="Revenue (in dollars)",
+                    dest="figure_ylabel", default="Average Daily Revenue (in dollars)",
                     help="The label for the y-axis.")
   return parser
 
