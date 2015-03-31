@@ -48,7 +48,56 @@
   \lstinputlisting[language=Python, firstline=89, lastline=109]{pset5_code/nautilusbb.py}
 \item 
   \begin{enumerate}
-  \item 
+  \item  We make use if the commands to generate Table \ref{tab:bb_tt}.
+  \begin{lstlisting}
+  ./auction --perms 5 --iters 200 --seed 39 Truthful,5
+  ./auction --perms 5 --iters 200 --seed 39 Nautilusbb,5
+  \end{lstlisting}
+  Table \ref{tab:bb_tt} summarizes our results for the utilities of the agents after 200 iterations with 5 permutations per iteration.
+    
+    \begin{table}[h!]
+      \centering
+        \begin{tabular}{clllllll}
+        \hline
+        (T, BB) & Agent 0 & Agent 1 & Agent 2 & Agent 3 & Agent 4 & Average & Std. Dev     \\ \hline
+        (5,0)   & 354.91 & 389.92 & 337.78, & 302.44 & 340.21 & 341.24 & 31.63 \\
+        (0,5)   & 672.17   & 783.62  & 678.75  & 646.13  & 705.69 & 697.27 & 52.71 \\ \hline
+        \end{tabular}
+        \caption{Table summarizing average daily utilities of agents playing in homogeneous populations. Game play took place over 48 rounds, or two days.}
+        \label{tab:bb_tt}
+      \end{table}
+
+    As we can tell, the average utility of a population of truthful agents is $\$341.24$ which is much lower than the average utility of the balanced bidder populations ($\$607.27$). The standard deviations indicate that this is of statistical significance as the two values lie at least $6\sigma$ away from each other (with respect to either $\sigma$).
+
+    The explanation for the above result is intuitive. Truthful agents are bidding their respective values, without regard for the previous history. We already know that GSP is not a truthful auction, and therefore the optimal strategy for an agent is certainly not truthful bidding. Therefore, the population of truthful agents does not maximize their utility. 
+
+    On the other hand, the population of balanced bidders perform a type of targeted bidding, using the history to select a bid which optimizes the expected utility. Therefore, from a general point of view, a strategy which explicit seeks to optimize utility should do so.
+
+    More precisely, we have three conditions we consider in the balanced bidding scenario, depending on the position $k^*$ we select to target and the price, $p_{k*}$, we expect to pay for that position assuming bids for this round are equivalent to last round bids. 
+
+    \begin{itemize}
+      \item Case where $p_{k^*} \geq w_i$. Here, we bid our value. 
+      \item Otherwise, case where $k* = 1$. Here, we're going for the top position, and again, we bid our value.
+      \item Otherwise, case where $k* > 1$. Here, we're going for some intermediate position. We therefore bid enough to become indifferent between positions $k^*$ and $k*-1$ as dictated by the lanced bidding strategy. However, note that:
+      \begin{align*}
+        b_i = w_i - \frac{q_{k^*}}{q_{k^{*}-1}}(w_i - p_{k^*}) \leq w_i
+      \end{align*}
+      Therefore, our bid is at most our value, but will be {\it strictly} less when $w_{i} - p_{k*} \neq 0$ and $q_{k*} \neq 0$.
+    \end{itemize}
+    Therefore, in a population of balanced bidding agents, we would expect the overall utility to be far greater. A truthful bid occurs sometimes, but other times a bid strictly less that the truthful is based, but is balanced so that it will lead to no harm to us given the same bids from the last rounds. This leads to an overall increase in utility for each agent, as they all continue to play the same strategy, targeting similar slots.
+
+    Another things of interest to not is Table \ref{tab:bb_tt_spend}. We see that the average expenditure 
+    \begin{table}[h]
+      \centering
+      \begin{tabular}{clllllll}
+      \hline
+      (T, BB) & Agent 0           & Agent 1           & Agent 2           & Agent 3           & Agent 4          & Average          & Std. Dev     \\ \hline
+      (5,0)   & 1200.17 & 1373.05 & 1232.28 & 1228.18 & 282.47 & 1228.8   & 68.18   \\
+      (0,5)   & 880.07   &  978.77  &  889.03  &  881.83  &  917.38 &  909.42 & 41.57 \\ \hline
+      \end{tabular}
+      \caption{Table summarizing average daily expenditure of agents playing in homogeneous populations. Game play took place over 48 rounds, or two days.}
+      \label{tab:bb_tt_spend}
+      \end{table}
   \end{enumerate}
 \end{enumerate}
 
@@ -56,21 +105,7 @@
 \begin{enumerate}[resume]
 \item 
   \begin{enumerate}
-  \item We make use if the commands:
-  \begin{lstlisting}
-  ./auction --perms 5 --iters 200 --seed 39 Truthful,5
-  ./auction --perms 5 --iters 200 --seed 39 Nautilusbb,5
-  \end{lstlisting}
-  The below table summarizes our results
-  
-    \begin{table}[h]
-\begin{tabular}{clllllll}
-\hline
-(Truthful, Balanced Bidding) & Agent 0                     & Agent 1                     & Agent 2                     & Agent 3                     & Agent 4                     & Average                     & Std. Dev                 \\ \hline
-\multicolumn{1}{|c|}{(5,0)}  & \multicolumn{1}{l|}{323.83} & \multicolumn{1}{l|}{325.21} & \multicolumn{1}{l|}{306.81} & \multicolumn{1}{l|}{332.79} & \multicolumn{1}{l|}{322.29} & \multicolumn{1}{l|}{322.19} & \multicolumn{1}{l|}{8.5} \\ \hline
-(0,5)                        &                             &                             &                             &                             &                             &                             &                          \\ \hline
-\end{tabular}
-\end{table}
+  \item
   \end{enumerate}
 \end{enumerate}
 
