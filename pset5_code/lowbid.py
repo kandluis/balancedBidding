@@ -10,7 +10,7 @@ from util import argmax_index
 class Lowbid(Nautilusbb):
     """Balanced bidding agent"""
     TOTALROUNDS = 48
-    RANGE = 3
+    RANGE = 9
 
     def __init__(self, id, value, budget):
         super(Lowbid, self).__init__(id,value, budget)

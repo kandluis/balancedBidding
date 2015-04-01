@@ -40,6 +40,16 @@ class Nautilusbb(object):
 #        sys.stdout.write("slot info: %s\n" % info)
         return info
 
+    def expected_utils_h(self,info, clicks):
+        # calculates utility per slot assuming agent has won with bid
+        # uses clicks and info[i][2] = min_bid for round i
+        utility = lambda s: clicks[s]*(self.value - info[s][1])
+        
+        # expected utility
+        return [utility(slot_id) for (slot_id, _, _) in info]
+
+    def get_clicks(self,t,history):
+        return history.round(t-1).clicks
 
     def expected_utils(self, t, history, reserve):
         """
@@ -52,15 +62,10 @@ class Nautilusbb(object):
         # info contains (slot_id, min_bid, max_bid) so if we bid 
         # min_bid <= b <= max_bid we win slot_id
         info = self.slot_info(t,history, reserve)
-        clicks = history.round(t-1).clicks
+        clicks = self.get_clicks(t,history)
 
-        # calculates utility per slot assuming agent has won with bid
-        # uses clicks and info[i][2] = min_bid for round i
-        utility = lambda s: clicks[s]*(self.value - info[s][1])
+        utilities = self.expected_utils_h(info, clicks)
         
-        # expected utility
-        utilities = [utility(slot_id) for (slot_id, _, _) in info]
-
         return utilities
 
     def target_slot(self, t, history, reserve):
@@ -93,7 +98,7 @@ class Nautilusbb(object):
         info = self.target_slot(t,history,reserve)
 
         min_bid = info[1]
-        c = [float(x) for x in prev_round.clicks]
+        c = [float(x) for x in self.get_clicks(t,history)]
         k = info[0]
         p = min_bid
 

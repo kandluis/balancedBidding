@@ -33,6 +33,9 @@ class History:
     def set_agent_spent(self, aid, spent):
         self.agents_spent[aid] = spent
 
+    def get_agent_spent(self, aid):
+        return self.agents_spent[aid]
+
 
 
 

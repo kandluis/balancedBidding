@@ -25,7 +25,7 @@ def plot_revenue_by_reserve(args, options, reserves):
 
   plot_options(reserves, revenues, options)
 
-def plot_revenue_by_period(args,options):
+def plot_by_period(args,options):
   results = auction.run_sim(options, args)
   stats = results['stats']
 
@@ -98,11 +98,16 @@ def parse_inputs(args):
 def main(args):
   # lets parse the inputs as usual
   parser = parse_inputs(args)
+
+  parser.add_option("--plot",
+                    dest="plot", default=True,
+                    help="Should we generate plots?")
+
   (options, args) = parser.parse_args()
 
   # plotting periods
-  if options.mechanism == "gsp":
-    plot_revenue_by_period(args, options)
+  if options.plot:
+    plot_by_period(args, options)
 
   else:
     max_reserve = int(options.max_reserve)

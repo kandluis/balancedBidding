@@ -15,9 +15,6 @@ class Highend(Nautilusbb):
     def __init__(self, id, value, budget):
         super(Highend, self).__init__(id,value, budget)
 
-    def initial_bid(self, reserve):
-        return self.value / 2
-
     def bid(self, t, history, reserve):
         # we bid less in the beginning rounds, bid more at the end
         # when other agents are out of money

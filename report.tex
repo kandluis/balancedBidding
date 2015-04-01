@@ -22,6 +22,9 @@
 % Used for table
 \usepackage{booktabs}
 
+% used to put figures side by side
+\usepackage{subfigure}
+
 \newcommand{\points}[1]{\textbf{[#1 Points]}}
 \newcommand{\extracredit}{\mbox{\textbf{[Extra Credit]}}}
 
@@ -38,14 +41,12 @@
 \item We use the truthful bidding agent as an example. The  implementation of the expected utility function is below:
 
   % expected utility code depends on pset5_code/nautilusbb.py
-  \lstinputlisting[language=Python, firstline=44, lastline=44]{pset5_code/nautilusbb.py}
-  \lstinputlisting[language=Python, firstline=52, lastline=64]{pset5_code/nautilusbb.py}
+  \lstinputlisting[language=Python, firstline=43, lastline=69]{pset5_code/nautilusbb.py}
 
   followed by the implementation of the bid function:
 
   % bid code depends on pset5_code/nautilusbb.py
-  \lstinputlisting[language=Python, firstline=78, lastline=78]{pset5_code/nautilusbb.py}
-  \lstinputlisting[language=Python, firstline=89, lastline=109]{pset5_code/nautilusbb.py}
+  \lstinputlisting[language=Python, firstline=84, lastline=114]{pset5_code/nautilusbb.py}
 \item 
   \begin{enumerate}
   \item  We make use if the commands to generate Table \ref{tab:bb_tt}.
@@ -55,7 +56,7 @@
   \end{lstlisting}
   Table \ref{tab:bb_tt} summarizes our results for the utilities of the agents after 200 iterations with 10 permutations per iteration.
     
-    \begin{table}[h!]
+    \begin{table}[!h]
       \centering
         \begin{tabular}{clllllll}
         \hline
@@ -67,7 +68,7 @@
         \label{tab:bb_tt}
       \end{table}
 
-    As we can tell, the average utility of a population of truthful agents is $\$341.24$ which is much lower than the average utility of the balanced bidder populations ($\$607.27$). The standard deviations indicate that this is of statistical significance as the two values lie at least $6\sigma$ away from each other (with respect to either $\sigma$).
+    As we can tell, the average utility of a population of truthful agents is $\$341.24$ which is much lower than the average utility of the balanced bidder populations ($\$697.27$). The standard deviations indicate that this is of statistical significance as the two values lie at least $6\sigma$ away from each other (with respect to either $\sigma$).
 
     The explanation for the above result is intuitive. Truthful agents are bidding their respective values, without regard for the previous history. We already know that GSP is not a truthful auction, and therefore the optimal strategy for an agent is certainly not truthful bidding. Therefore, the population of truthful agents does not maximize their utility. 
 
@@ -161,7 +162,7 @@
   \end{lstlisting}
   As can be seen from the figure, our intuition is entirely correct. The reserve price leads to a rise in average daily revenue, until about $\$0.9$, at which point it begins to decrease the average daily revenue.
 
-  \begin{figure}[h!]
+  \begin{figure}[!h]
   \centering
     \includegraphics[scale=0.4]{pset5_code/gsp_reserve_plot}
     \caption{Plot of the revenue with change in reserve price for a generalized second prize auction with agents who use a balanced bidding strategy.}
@@ -202,7 +203,7 @@
 
   We expect something similar to GSP as the bids increase. For verification, we can see Figure \ref{fig:vcg_reserve}.
 
-  \begin{figure}[h!]
+  \begin{figure}[!h]
     \centering
     \includegraphics[scale=0.5]{pset5_code/vcg_reserve_plot}
     \caption{Plot of VCG Auction revenue with 5 truthful bidders with respect to reserve price.}
@@ -226,13 +227,19 @@
   Nautilusbb,5
   \end{lstlisting}
 
-  \begin{figure}[h!]
+  \begin{figure}[!h]
     \centering
     \includegraphics[scale=0.5]{pset5_code/switch_revenue}
     \caption{Revenue for auctioneering when switching from GSP to VCG at round 24.}
     \label{fig:switch}
   \end{figure}
-  Note that the switch occurs at time period 24. Ignoring the effects on the revenue by the increased number of clicks, it's immediately obvious that VCG leads to a decrease in revenue (the graph would be symmetric if this were not the case, given that the budget constraint hasn't come into play). 
+  Note that the switch occurs at time period 24. Ignoring the effects on the revenue by the increased number of clicks, it's immediately obvious that VCG leads to a decrease in revenue (the graph would be symmetric if this were not the case, given that the budget constraint hasn't come into play). We can verify this by running an experiment with VCG and the balanced bidding strategy. We do this with the commands:
+   \begin{lstlisting}
+    ./auction --perms 1 --iters 200 --seed 39 
+    --mech="vcg" Nautilusbb,5
+    \end{lstlisting}
+
+  and note that the average daily revenue is $\$3583.62$ (significantly lower). This is because balanced bidding is not optimal under the VCG mechanism.
   
   Bidders must adjust to the new system, which takes a period of time, hence the slow recovery rate.
   \item On the agent's side, we see that if truthful bidding isn't always a DSE in all mechanisms, and it can be useful to deviate to a strategy that bids less than your true value (though these strategies may be harder to implement). In terms of mechanism design, it's a balance between short-term revenue and simplicity for the agents interfacing with the system. In short, different agents are best responses in different mechanisms, so it's important to tailor an agent's strategy to the mechanism.
@@ -243,7 +250,92 @@
 \begin{enumerate}[resume]
 \item
   \begin{enumerate}
-  \item 
+  \item Following what we learn from above, we design an agent which is tailored to the mechanism in the auction. First, we collect some data, which is summarized in Figure \ref{fig:budget_low}, \ref{fig:budget_high}, \ref{fig:budget_tt}, \ref{fig:budget_bb}. Respectively, we call these agents LowBidder, HighBidder, BalancedBidder, and Truthful. We already know the dynamics of BalancedBidder and Truthful.
+
+  \subsection*{Data Collection}
+
+  As for HighBidder, the idea is that we perform a balanced bidder approach, but with some small modifications. For all $t \leq 42$, we bid only half the value we normally would. The idea here is to save money in early rounds so that we can then spend it at later rounds. For all later rounds, we bid normally.
+
+  For LowBidder, the idea is that we don't want to bid when the click through rate is low. We implement this by noting that in rounds where $15 \leq t \leq 33$, the bidder bids $0$. On all other rounds, the bids are the same as the balanced bidder.
+
+  From the graphs below, we can tell that all of these approaches do better than a naive approach under budget constraints. However, as these are the two suggested approaches, and also some of the easiest to implement, we decided to try a more sophisticated mechanism.
+
+  \begin{figure*}[!h]
+    \centering
+      \begin{subfigure}{}
+        \centering
+        \includegraphics[scale=0.2]{pset5_code/budget_tt_utility}
+      \end{subfigure}
+      ~
+      \begin{subfigure}{}
+        \centering
+        \includegraphics[scale=0.2]{pset5_code/budget_tt_revenue}
+      \end{subfigure}
+      \caption{Left: Utility for a population of truthful bidders with \$600 budget constraint. Right: revenue.}
+      \label{fig:budget_tt}
+  \end{figure*}
+
+  \begin{figure*}[!h]
+    \centering
+      \begin{subfigure}{}
+        \centering
+       \includegraphics[scale=0.2]{pset5_code/budget_bb_utility}
+      \end{subfigure}
+      ~
+      \begin{subfigure}{}
+        \centering
+        \includegraphics[scale=0.2]{pset5_code/budget_bb_revenue}
+      \end{subfigure}
+      \caption{Left: Utility of Balanced bidding agents under a daily budget constraint of \$600 over a single day. Right: Revenue.}
+      \label{fig:budget_bb}
+  \end{figure*}
+
+  \begin{figure*}[!h]
+    \centering
+      \begin{subfigure}{}
+        \centering
+       \includegraphics[scale=0.2]{pset5_code/budget_high_utility}
+      \end{subfigure}
+      ~
+      \begin{subfigure}{}
+        \centering
+        \includegraphics[scale=0.2]{pset5_code/budget_high_revenue}
+      \end{subfigure}
+      \caption{Left: Utility of High bidder agents under a daily budget constraint of \$600 over a single day. Right: Revenue.}
+      \label{fig:budget_high}
+  \end{figure*}
+
+  \begin{figure*}[!h]
+    \centering
+      \begin{subfigure}{}
+        \centering
+       \includegraphics[scale=0.2]{pset5_code/budget_low_utility}
+      \end{subfigure}
+      ~
+      \begin{subfigure}{}
+        \centering
+        \includegraphics[scale=0.2]{pset5_code/budget_low_revenue}
+      \end{subfigure}
+      \caption{Left: Utility of Low bidder agents under a daily budget constraint of \$600 over a single day. Right: Revenue.}
+      \label{fig:budget_low}
+  \end{figure*}
+
+
+  \subsection*{Final Mechanism}
+  \pagebreak
+  First, our mechanism changes the initial bid. We expect most people to leave their initial bid as:
+
+  \begin{lstlisting}
+  return self.value / 2
+  \end{lstlisting}
+  Here's we're taking advantage of the code that was initially distributed. It's a safe assumption to.
+  Therefore, we design an agent which attempts to maximize his utility in the first round, given that everyone will be paying.
+
+  Using this information, our agent, $k$, assumes the truthful value of the other agents is
+  %\begin{align*}
+  %  w_i &= b_i^{(0)} \tag{i \neq k}
+  %\end{align*}
+  
   \end{enumerate}
 \end{enumerate}
 \end{document}
