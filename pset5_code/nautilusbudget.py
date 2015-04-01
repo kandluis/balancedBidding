@@ -58,7 +58,7 @@ class NautilusBudget(Nautilusbb):
         return [iround(top_slot * pow(self.dropoff, i))
                               for i in range(self.competitors)]
 
-    def get_bid(t, history, reserve, value):
+    def get_bid(self, t, history, reserve, value):
         if t == 0:
             return value/2
         else:
@@ -72,15 +72,15 @@ class NautilusBudget(Nautilusbb):
         prev_occupants = history.round(t-1).occupants
         prev_round = zip(prev_occupants, prev_bids)
         if t == 1:
-            self.values_of_agents = {occupant : bid*2 for (occupant,bid) in prev_round if occupant != self.id}
+            self.values_of_agents = {occupant : bid*2 for (occupant,(slot,bid)) in prev_round if occupant != self.id}
 
         # on every round, we first calculate what the other agents would bid under balanced bidding using our value
-        other_agent_pred_bids = { agent: self.get_bid(t-1,history,reserve, value) for agent, value in self.values_of_agents}
+        other_agent_pred_bids = { agent: self.get_bid(t-1,history,reserve, value) for (agent, value) in self.values_of_agents.iteritems()}
         other_agent_real_bids = { agent: bid for (agent, bid) in prev_round }
 
         # count how many of the agents bid more than they should have the last round
         nsavers = 0
-        for agent, pred_bid in other_agent_pred_bids:
+        for (agent, pred_bid) in other_agent_pred_bids.iteritems():
             # we have a saver!
             if other_agent_real_bids[agent] < pred_bid:
                 nsavers += 1
