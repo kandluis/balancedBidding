@@ -24,31 +24,7 @@ class NautilusBudget(Nautilusbb):
         self.values_of_agents = {}
 
     def initial_bid(self, reserve):
-        # initial bid is a balanced bid
-        max_bid = self.max_value/2
-        min_bid = self.min_value/2
-        expected_min_bid = lambda s: ((float(self.competitors) - s) / float(self.competitors)) * (max_bid - min_bid) + min_bid
-        expected_bids = [expected_min_bid(k) for k in range(1,self.competitors+1)]
-        info = [(i,bid,bid) for (i,bid) in enumerate(expected_bids)]
-
-        # clicks for initial round
-        clicks = self.get_clicks(0,None)
-
-        # maximal utility
-        utilities = self.expected_utils_h(info, clicks, self.value)
-        target = argmax_index(utilities)
-        p = expected_bids[target]
-
-        # written for clarity
-        if p >= self.value:
-            bid = self.value
-        elif target > 0:
-            # use click ratio as a measure of quality ratio
-            bid = self.value - (clicks[target]/clicks[target-1]) * (self.value - p)
-        else:
-            bid = self.value
-
-        return bid
+        return self.value / 2
 
     def get_clicks(self,t, history):
         '''
@@ -69,14 +45,13 @@ class NautilusBudget(Nautilusbb):
         # simulate a balanced bidding strategy (if we find that 2 or less are saving, then we save)
         # if 3 or more are saving, then we balance bid
         prev_bids = history.round(t-1).bids
-        prev_occupants = history.round(t-1).occupants
-        prev_round = zip(prev_occupants, prev_bids)
+
         if t == 1:
-            self.values_of_agents = {occupant : bid*2 for (occupant,(slot,bid)) in prev_round if occupant != self.id}
+            self.values_of_agents = {agent : bid*2 for (agent, bid) in prev_bids if agent != self.id }
 
         # on every round, we first calculate what the other agents would bid under balanced bidding using our value
         other_agent_pred_bids = { agent: self.get_bid(t-1,history,reserve, value) for (agent, value) in self.values_of_agents.iteritems()}
-        other_agent_real_bids = { agent: bid for (agent, bid) in prev_round }
+        other_agent_real_bids = { agent: bid for (agent, bid) in prev_bids if agent != self.id }
 
         # count how many of the agents bid more than they should have the last round
         nsavers = 0
