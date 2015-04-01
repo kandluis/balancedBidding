@@ -28,7 +28,7 @@ class NautilusBudget(Nautilusbb):
         min_bid = self.min_value/2
         expected_min_bid = lambda s: ((self.competitors - s) / self.competitors) * (max_bid - min_bid) + min_bid
         expected_bids = [expected_min_bid(k) for k in range(1,self.competitors+1)]
-        info = [(i,bid,bid) for enumerate(expected_bids)]
+        info = [(i,bid,bid) for  enumerate(expected_bids)]
         info.append((self.competitors,reserve,reserve))f
 
         # clicks for initial round

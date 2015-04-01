@@ -64,7 +64,7 @@ class Nautilusbb(object):
         info = self.slot_info(t,history, reserve)
         clicks = self.get_clicks(t,history)
 
-        utilities = self.expected_utils_h(info, clicks,value)
+        utilities = self.expected_utils_h(info, clicks, value)
         
         return utilities
 
@@ -76,7 +76,7 @@ class Nautilusbb(object):
         the other-agent bid for that slot in the last round.  If slot_id = 0,
         max_bid is min_bid * 2
         """
-        i =  argmax_index(self.expected_utils(t, history, reserve))
+        i =  argmax_index(self.expected_utils(t, history, reserve, value))
         info = self.slot_info(t, history, reserve)
         return info[i]
 
