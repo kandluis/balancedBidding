@@ -40,10 +40,10 @@ class Nautilusbb(object):
 #        sys.stdout.write("slot info: %s\n" % info)
         return info
 
-    def expected_utils_h(self,info, clicks):
+    def expected_utils_h(self,info, clicks, value):
         # calculates utility per slot assuming agent has won with bid
         # uses clicks and info[i][2] = min_bid for round i
-        utility = lambda s: clicks[s]*(self.value - info[s][1])
+        utility = lambda s: clicks[s]*(value - info[s][1])
         
         # expected utility
         return [utility(slot_id) for (slot_id, _, _) in info]
@@ -51,7 +51,7 @@ class Nautilusbb(object):
     def get_clicks(self,t,history):
         return history.round(t-1).clicks
 
-    def expected_utils(self, t, history, reserve):
+    def expected_utils(self, t, history, reserve, value):
         """
         Figure out the expected utility of bidding such that we win each
         slot, assuming that everyone else keeps their bids constant from
@@ -64,11 +64,11 @@ class Nautilusbb(object):
         info = self.slot_info(t,history, reserve)
         clicks = self.get_clicks(t,history)
 
-        utilities = self.expected_utils_h(info, clicks)
+        utilities = self.expected_utils_h(info, clicks,value)
         
         return utilities
 
-    def target_slot(self, t, history, reserve):
+    def target_slot(self, t, history, reserve, value):
         """Figure out the best slot to target, assuming that everyone else
         keeps their bids constant from the previous rounds.
 
@@ -80,8 +80,10 @@ class Nautilusbb(object):
         info = self.slot_info(t, history, reserve)
         return info[i]
 
+    def bid(self,t,history,reserve):
+        return self.bid_value(t,history,reserve,self.value)
 
-    def bid(self, t, history, reserve):
+    def bid_value(self, t, history, reserve, value):
         # The Balanced bidding strategy (BB) is the strategy for a player j that, given
         # bids b_{-j},
         # - targets the slot s*_j which maximizes his utility, that is,
@@ -92,10 +94,9 @@ class Nautilusbb(object):
         # (p_x is the price/click in slot x)
         # If s*_j is the top slot, bid the value v_j
         prev_round = history.round(t-1)
-        (slot, min_bid, max_bid) = self.target_slot(t, history, reserve)
 
         bid = 0  # change this
-        info = self.target_slot(t,history,reserve)
+        info = self.target_slot(t,history,reserve, value)
 
         min_bid = info[1]
         c = [float(x) for x in self.get_clicks(t,history)]
@@ -103,18 +104,18 @@ class Nautilusbb(object):
         p = min_bid
 
         # written for clarity
-        if p >= self.value:
-            bid = self.value
+        if p >= value:
+            bid = value
         elif k > 0:
             # use click ratio as a measure of quality ratio
-            bid = self.value - (c[k]/c[k-1]) * (self.value - p)
+            bid = value - (c[k]/c[k-1]) * (value - p)
         else:
-            bid = self.value
+            bid = value
 
         return bid
 
     def __repr__(self):
         return "%s(id=%d, value=%d)" % (
-            self.__class__.__name__, self.id, self.value)
+            self.__class__.__name__, self.id, value)
 
 

@@ -11,7 +11,7 @@ def iround(x):
     """Round x and return an int"""
     return int(round(x))
 
-class NautilusbbBudget(Nautilusbb):
+class NautilusBudget(Nautilusbb):
     """Balanced bidding agent"""
     min_value = 0.25
     max_value = 1.75
@@ -20,7 +20,7 @@ class NautilusbbBudget(Nautilusbb):
 
     def __init__(self, id, value, budget):
         super(NautilusbbBudget, self).__init__(id,value)
-        self.values_of_agents = {id : value}
+        self.values_of_agents = {}
 
     def initial_bid(self, reserve):
         # initial bid is a balanced bid
@@ -28,7 +28,8 @@ class NautilusbbBudget(Nautilusbb):
         min_bid = self.min_value/2
         expected_min_bid = lambda s: ((self.competitors - s) / self.competitors) * (max_bid - min_bid) + min_bid
         expected_bids = [expected_min_bid(k) for k in range(1,self.competitors+1)]
-        info = [(i,bid,bid) for enumerate(expected_bids)] + [(self.competitors,reserve,reserve)]
+        info = [(i,bid,bid) for enumerate(expected_bids)]
+        info.append((self.competitors,reserve,reserve))f
 
         # clicks for initial round
         clicks = get_clicks(0)
@@ -69,14 +70,42 @@ class NautilusbbBudget(Nautilusbb):
         info = self.slot_info(t, history, reserve)
         return info[i]
 
+    def get_bid(t, history, reserve, value):
+        if t == 0:
+            return value/2
+        else:
+            return super(NautilusbbBudget,self).bid_value(t,history,reserve,value)
+
     def bid(self, t, history, reserve):
         # if t = 1, we've finished t = 0 round, so save what everyone's values are
-        prev_bids = history.round(t).bids
-        prev_occupants = history.round(t).occupants
-
+        # simulate a balanced bidding strategy (if we find that 2 or less are saving, then we save)
+        # if 3 or more are saving, then we balance bid
+        prev_bids = history.round(t-1).bids
+        prev_occupants = history.round(t-1).occupants
+        prev_round = zip(prev_occupants, prev_bids)
         if t == 1:
-            self.values_of_agents = self.values_of_agents.update(
-                {occupant : bid*2 for (occupant,bid) in zip(prev_occupants, prev_bids) if occupant != self.id})
+            self.values_of_agents = {occupant : bid*2 for (occupant,bid) in prev_round if occupant != self.id}
 
-        
+        # on every round, we first calculate what the other agents would bid under balanced bidding using our value
+        other_agent_pred_bids = { agent: self.get_bid(t-1,history,reserve, value) for agent, value in self.values_of_agents}
+        other_agent_real_bids = { agent: bid for (agent, bid) in prev_round }
+
+        # count how many of the agents bid more than they should have the last round
+        nsavers = 0
+        for agent, pred_bid in other_agent_pred_bids:
+            # we have a saver!
+            if other_agent_real_bids[agent] < pred_bid:
+                nsavers += 1
+
+        # more than 2 savers, so compete now
+        if nsavers > 2:
+            easiness = 1
+
+        # <= 2 saving, so wait until the world gets a little less harsh
+        else:
+            easiness = 0.5
+
+        return easiness*super(NautilusbbBudget, self).bid(t,history,reserve) 
+
+
 
