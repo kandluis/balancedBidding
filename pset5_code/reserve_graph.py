@@ -30,13 +30,19 @@ def plot_revenue_by_period(args,options):
   stats = results['stats']
 
   per_run_revenues = [[stat.revenue_in_round(t) for t in xrange(stat.history.num_rounds())] for stat in stats ]
+  per_run_utility = [[stat.util_in_round(0,t) for t in xrange(stat.history.num_rounds())] for stat in stats ]
 
   per_bid_revenues = [float(sum(revenue)/100) for revenue in zip(*per_run_revenues)]
+  per_bid_utility = [float(sum(utility)/100) for utility in zip(*per_run_utility)]
 
   t = len(per_bid_revenues)
   x = range(t)
 
-  plot_options(x,per_bid_revenues,options)
+  filename = options.figure_file
+  options.figure_file = filename + "_revenue"
+  plot_options(x, per_bid_revenues, options)
+  options.figure_file = filename + "_utility"
+  plot_options(x, per_bid_utility, options)
 
 def plot_revenue_by_iteration(args,options):
   '''
@@ -95,7 +101,7 @@ def main(args):
   (options, args) = parser.parse_args()
 
   # plotting periods
-  if options.mechanism == "switch":
+  if options.mechanism == "gsp":
     plot_revenue_by_period(args, options)
 
   else:

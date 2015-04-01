@@ -86,7 +86,7 @@
     \end{itemize}
     Therefore, in a population of balanced bidding agents, we would expect the overall utility to be far greater. A truthful bid occurs sometimes, but other times a bid strictly less that the truthful is based, but is balanced so that it will lead to no harm to us given the same bids from the last rounds. This leads to an overall increase in utility for each agent, as they all continue to play the same strategy, targeting similar slots.
 
-    Another things of interest to not is Table \ref{tab:bb_tt_spend}. We see that the average daily expenditure of a truthful population is far higher than the average daily expenditure of an balanced bidder population. The explanation for this effect is quite similar to the above. In a balanced bidding situation, bidders will sometimes bid lower than their values, and if every bidders does so, it allows all of them to obtain the same items for a lower price, thereby leading to the same expenditure. 
+    Another interesting things to note is Table \ref{tab:bb_tt_spend}. We see that the average daily expenditure of a truthful population is far higher than the average daily expenditure of an balanced bidder population. The explanation for this effect is quite similar to the above. In a balanced bidding situation, bidders will sometimes bid lower than their values, and if every bidders does so, it allows all of them to obtain the same items for a lower price, thereby leading to the same expenditure. 
     \begin{table}[h]
       \centering
       \begin{tabular}{clllllll}
@@ -115,7 +115,7 @@
     \caption{Summary of average daily utilities for mixed populations with a single deviating agent, specified by an *.}
     \label{tab:mixed}
   \end{table}
-  Looking at row 1 in Table \ref{tab:mixed}, we see that a deviation from truthful to balanced bidding is beneficial. because it increase Agent 4's expected utility. Interestingly enough, it also appears to slightly increase the utility of the other agents. The idea behind this would be that by bidding a lower amount but targeting the right stops, Agent 4 actually allows truthful agents to slightly increase their utilities.
+  Looking at row 1 in Table \ref{tab:mixed}, we see that a deviation from truthful to balanced bidding is beneficial. because it increase Agent 4's expected utility. Interestingly enough, it also appears to have a slight positive effect the utility of the other agents. The idea behind this would be that by bidding a lower amount but targeting the right stops, Agent 4 actually allows truthful agents to pay less and slightly increases their utilities.
 
   Looking at row 2 in Table \ref{tab:mixed}, we see that a deviation from a balanced bidding strategy is not useful, in the sense that it appears to do no better than an balanced bidding strategy. This is slightly surprising, as we originally expected the deviation to be {\it harmful}. However, the payouts of the agents are well determined by just four agents, considering only four spots are being auction. Due to the fact that four agents are all using the balanced bidding strategy, it's reasonable to expect no difference in utility if one agent switches to truthful bidding. However, as more agents switch, we'd expect something closer to row 1. In general, the important fact is that the deviation is no better than balanced bidding. 
 
@@ -219,7 +219,7 @@
 
   The only qualitative difference between the two figures is the volatility of Figure \ref{fig:gps_plot}. However, this is likely an artifact of the bidding strategy or the seed, rather than the changes in the reserve price or GSP itself.
 
-  \item The revenue decreases, as expected. It is now \$4068.70, which is lower by about $10\%$.  The balanced bidding strategy is not revenue-optimizing in the VCG mechanism. We can see this more clearly from the Figure \ref{fig:switch}, which was generated using the command:
+  \item The revenue decreases, as expected, because for the same bids, GSP generates more revenue than VCG. It is now \$4068.70, which is lower by about $10\%$.  The balanced bidding strategy is not revenue-optimizing in the VCG mechanism. We can see this more clearly from the Figure \ref{fig:switch}, which was generated using the command:
    \begin{lstlisting}
   ./reserve_graph --perms 1 --iters 200 --seed 39 
   --mech="switch" --figure_title "..." --figure_file "..." 
@@ -232,9 +232,10 @@
     \caption{Revenue for auctioneering when switching from GSP to VCG at round 24.}
     \label{fig:switch}
   \end{figure}
-  Note that the switch occurs at time period 24. Ignoring the effects on the revenue by the creased number of clicks, it's immediately obvious that VCG leads to a decrease in revenue (the graph would be symmetric if this were not the case, given that the budget constraint hasn't come into play). 
-  \item TODO 3(e)
-  agents have trade-off, analysis is hard, complicated, not immediately clear which mechanism is best, etc. 
+  Note that the switch occurs at time period 24. Ignoring the effects on the revenue by the increased number of clicks, it's immediately obvious that VCG leads to a decrease in revenue (the graph would be symmetric if this were not the case, given that the budget constraint hasn't come into play). 
+  
+  Bidders must adjust to the new system, which takes a period of time, hence the slow recovery rate.
+  \item On the agent's side, we see that if truthful bidding isn't always a DSE in all mechanisms, and it can be useful to deviate to a strategy that bids less than your true value (though these strategies may be harder to implement). In terms of mechanism design, it's a balance between short-term revenue and simplicity for the agents interfacing with the system. In short, different agents are best responses in different mechanisms, so it's important to tailor an agent's strategy to the mechanism.
   \end{enumerate}
 \end{enumerate}
 
